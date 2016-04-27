@@ -3,17 +3,33 @@
 <html>
 
 	<head>
-		<title>Clementine.js - The elegant and lightweight full stack JavaScript boilerplate.</title>
+		<title>FCC Booktrader.</title>
 		
 		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
 	</head>
 
 	<body>
+		<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1737194606521581',
+      xfbml      : true,
+      version    : 'v2.6'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 		<div class="container">	
 			<div class="login">
-				<img src="/public/img/clementine_150.png" />
+
 				<br />
-				<p class="clementine-text">Clementine.js</p>
 				<a href="/auth/github">
 					<div class="btn" id="login-btn">
 						<img src="/public/img/github_32px.png" alt="github logo" />
