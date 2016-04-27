@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 app.get('/', function (req, res) {
 			
-	res.send(public/index.html);
+	res.sendFile(process.cwd() + '/public/index.html');
 	
 			
 });
