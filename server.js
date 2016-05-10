@@ -37,6 +37,11 @@ app.get('/',
   function(req, res) {
     res.render('index', { user: req.user });
   });
+  
+  app.get('/login',
+  function(req, res){
+    res.render('login');
+  });
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);
