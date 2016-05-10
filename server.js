@@ -8,6 +8,8 @@ var Strategy = require('passport-facebook').Strategy;
 var User = require('./app/models/users.js');
 
 var session = require('express-session');
+require('dotenv').load();
+
 
 //configure passport
 
@@ -26,7 +28,6 @@ passport.use(new Strategy({
 
 
 var app = express();
-require('dotenv').load();
 
 mongoose.connect(process.env.MONGO_URI);
 
@@ -56,11 +57,13 @@ app.get('/auth/facebook/callback',
     res.redirect('/');
   });
   
+  /**
   app.get('/profile',
   require('connect-ensure-login').ensureLoggedIn(),
   function(req, res){
     res.render('profile', { user: req.user });
   });
+  **/
 
 var port = process.env.PORT || 8080;
 app.listen(port,  function () {
