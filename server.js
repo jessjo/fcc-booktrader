@@ -30,14 +30,13 @@ passport.use(new Strategy({
 var app = express();
 
 mongoose.connect(process.env.MONGO_URI);
+app.set('views', __dirname + '/app/views');
+app.set('view engine', 'ejs');
 
-
-app.get('/', function (req, res) {
-			
-	res.sendFile(process.cwd() + '/public/index.html');
-	
-			
-});
+app.get('/',
+  function(req, res) {
+    res.render('index', { user: req.user });
+  });
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);
