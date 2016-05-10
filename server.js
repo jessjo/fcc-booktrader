@@ -21,18 +21,34 @@ passport.use(new Strategy({
     callbackURL: "https://fcc-booktrader-jessjo.c9users.io/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
-    Users.find({ facebookId: profile.id }, function (err, user) {
-    	 if (err) throw err;
-    	   if(user){
-               
-               console.log(user + " found.");
-              
-             } else {
-                  console.log("no result")
-             }
-      return cb(err, user);
-    });
-  }
+
+        //check user table for anyone with a facebook ID of profile.id
+        Users.findOne({
+            'id': profile.id 
+        }, function(err, user) {
+            if (err) {
+                return cb(err);
+            }
+            //No user was found... so create a new user with values from Facebook (all the profile. stuff)
+            if (!user) {
+            	console.log(profile);
+                user = new Users({
+                	id:profile.id,
+                    name: profile.displayName,
+                    username: profile.username,
+                    
+                });
+                user.save(function(err) {
+                    if (err) console.log(err);
+                    return cb(err, user);
+                });
+            } else {
+                //found user. Return
+                return cb(err, user);
+            }
+        });
+    }
+  
 ));
 
 
@@ -40,6 +56,9 @@ passport.use(new Strategy({
 
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'ejs');
+app.use(session({ secret: 'ilovebunnyrabbits' }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/',
   function(req, res) {

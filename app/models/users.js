@@ -4,12 +4,13 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var User = new Schema({
-	facebookID: String,
-	facebook: {
+
+		name: String,
+		email: String,
+		username: String,
+		facebook: String,
 		id: String,
-		displayName: String,
-		username: String
-	},
+
 	local:{
 	    books: [String]
 	}
