@@ -16,7 +16,7 @@ require('dotenv').load();
 passport.use(new Strategy({
     clientID: process.env.FACEBOOK_KEY,
     clientSecret: process.env.FACEBOOK_SECRET,
-    callbackURL: "http://localhost:3000/auth/facebook/callback"
+    callbackURL: "https://fcc-booktrader-jessjo.c9users.io/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
