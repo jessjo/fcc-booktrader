@@ -5,11 +5,13 @@ var routes = require('./app/routes/index.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
-var User = require('./app/models/users.js');
+var Users = require('./app/models/users.js');
 
 var session = require('express-session');
 require('dotenv').load();
+var app = express();
 
+mongoose.connect(process.env.MONGO_URI);
 
 //configure passport
 
@@ -19,7 +21,15 @@ passport.use(new Strategy({
     callbackURL: "https://fcc-booktrader-jessjo.c9users.io/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+    Users.find({ facebookId: profile.id }, function (err, user) {
+    	 if (err) throw err;
+    	   if(user){
+               
+               console.log(user + " found.");
+              
+             } else {
+                  console.log("no result")
+             }
       return cb(err, user);
     });
   }
@@ -27,9 +37,7 @@ passport.use(new Strategy({
 
 
 
-var app = express();
 
-mongoose.connect(process.env.MONGO_URI);
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'ejs');
 
