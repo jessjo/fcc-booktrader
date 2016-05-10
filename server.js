@@ -5,12 +5,13 @@ var routes = require('./app/routes/index.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
+var User = require('../models/users.js');
 
 var session = require('express-session');
 
 //configure passport
 
-passport.use(new FacebookStrategy({
+passport.use(new Strategy({
     clientID: process.env.FACEBOOK_KEY,
     clientSecret: process.env.FACEBOOK_SECRET,
     callbackURL: "http://localhost:3000/auth/facebook/callback"
