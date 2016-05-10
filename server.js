@@ -5,7 +5,7 @@ var routes = require('./app/routes/index.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
-var User = require('../models/users.js');
+var User = require('./app/models/users.js');
 
 var session = require('express-session');
 
