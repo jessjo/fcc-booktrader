@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
 var Users = require('./app/models/users.js');
+var gBooks = require ('google-books-search');
 
 var session = require('express-session');
 require('dotenv').load();
@@ -63,6 +64,14 @@ app.use(passport.session());
 app.get('/',
   function(req, res) {
     res.render('index', { user: req.user });
+    gBooks.search('Professional JavaScript for Web Developers', function(error, results) {
+    	if ( ! error ) {
+     		console.log(results);
+    	} else {
+        	console.log(error);
+    	}
+	});
+   
   });
   
   app.get('/login',

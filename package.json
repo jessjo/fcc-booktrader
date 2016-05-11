@@ -28,6 +28,7 @@
     "ejs": "^2.4.1",
     "express": "^4.12.4",
     "express-session": "^1.11.3",
+    "google-books-search": "^0.3.0",
     "mongoose": "^4.1.0",
     "mongoose-findorcreate": "^0.1.2",
     "passport": "^0.3.2",
