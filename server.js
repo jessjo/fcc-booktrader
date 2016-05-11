@@ -67,7 +67,7 @@ app.get('/',
   function(req, res) {
     res.render('index', { user: req.user });
     var options = {
-    	key: process.env.GOOGLE_BOOKS_SERVER_KEY,
+    
     	field: 'title',
     	offset: 0,
  		limit: 1,
