@@ -65,9 +65,8 @@ app.use(passport.session());
 
 app.get('/',
   function(req, res) {
-    res.render('index', { user: req.user });
+    res.render('index', { user: req.user, search: "placeholder" });
     var options = {
-    
     	field: 'title',
     	offset: 0,
  		limit: 1,
