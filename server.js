@@ -7,6 +7,8 @@ var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
 var Users = require('./app/models/users.js');
 var gBooks = require ('google-books-search');
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
 
 var session = require('express-session');
 require('dotenv').load();
@@ -74,9 +76,9 @@ app.get('/',
     res.render('login');
   });
   
-  app.get('/findBook', 
+  app.post('/findBook', upload.array(),
   	function(req,res){
-  		console.log(req.title);
+  		console.log(req.body.title);
   	    var options = {
     		field: 'title',
     		offset: 0,
@@ -85,14 +87,14 @@ app.get('/',
     		order: 'relevance',
     		lang: 'en'
 		};
-    	gBooks.search(req.title, options, function(error, results) {
+    	gBooks.search(req.body.title, options, function(error, results) {
     		if ( ! error ) {
      			console.log(results);
     		} else {
         		console.log(error);
     		}
 		});
-		res.render('index', { user: req.user, search: req.title });
+		res.render('index', { user: req.user, search: req.body.title });
   })
 
 passport.serializeUser(function(user, cb) {
