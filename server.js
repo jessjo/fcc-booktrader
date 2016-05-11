@@ -65,22 +65,7 @@ app.use(passport.session());
 
 app.get('/',
   function(req, res) {
-    res.render('index', { user: req.user, search: "placeholder" });
-    var options = {
-    	field: 'title',
-    	offset: 0,
- 		limit: 1,
-    	type: 'books',
-    	order: 'relevance',
-    	lang: 'en'
-	};
-    gBooks.search('Professional JavaScript for Web Developers', options, function(error, results) {
-    	if ( ! error ) {
-     		console.log(results);
-    	} else {
-        	console.log(error);
-    	}
-	});
+    res.render('index', { user: req.user, search: "" });
    
   });
   
@@ -88,6 +73,27 @@ app.get('/',
   function(req, res){
     res.render('login');
   });
+  
+  app.get('/findBook', 
+  	function(req,res){
+  		console.log(req.title);
+  	    var options = {
+    		field: 'title',
+    		offset: 0,
+ 			limit: 1,
+    		type: 'books',
+    		order: 'relevance',
+    		lang: 'en'
+		};
+    	gBooks.search(req.title, options, function(error, results) {
+    		if ( ! error ) {
+     			console.log(results);
+    		} else {
+        		console.log(error);
+    		}
+		});
+		res.render('index', { user: req.user, search: req.title });
+  })
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);
