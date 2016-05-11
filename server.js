@@ -93,11 +93,12 @@ app.get('/',
 		};
 		
     	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
-    		if ( ! error ) {
+    			if ( ! error ) {
      			console.log(results);
-     			//book found build a book object, render results.
+     			//book found build a book object, render results
+     			console.log (results[0].id);
      			Books.findOne({
-            		'id': req.body.id 
+            		'bookid': results[0].id 
         		}, function(err, book) {
             		if (err) {
                 		return err;
@@ -106,20 +107,25 @@ app.get('/',
         			 if (!book) {
           
                 		book = new Books({
-                			id:req.body.id,
-                	 		title: req.body.title,
-                	 		authors: req.body.authors,
-                    		rating: req.body,
-                    		thumbnail: req.body.thumbnail,
+                			bookid:results[0].id,
+                	 		title: results[0].title,
+                	 	    author: results[0].authors,
+                    		rating: results[0].averageRating,
+                    		thumbnail: results[0].thumbnail,
                  	
                 		});
                 	book.save(function(err) {
                     	if (err) console.log(err);
                     	console.log(book);
+                    	
                     	return book;
+                    
                 	});
+                		
             	} else {
                 	//found book. Return
+                	console.log("found book");
+                	console.log(book);
                 	return book;
             }
         });
