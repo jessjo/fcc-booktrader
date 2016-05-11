@@ -67,7 +67,7 @@ app.use(passport.session());
 
 app.get('/',
   function(req, res) {
-    res.render('index', { user: req.user, search: "" });
+    res.render('index', { user: req.user, search: "", book: "" });
    
   });
   
@@ -79,6 +79,8 @@ app.get('/',
   app.post('/findBook', upload.array(),
   	function(req,res){
   		console.log(req.body.title);
+  		
+  		//set to only return 1 best match book
   	    var options = {
     		field: 'title',
     		offset: 0,
@@ -87,14 +89,19 @@ app.get('/',
     		order: 'relevance',
     		lang: 'en'
 		};
+		
     	gBooks.search(req.body.title, options, function(error, results) {
     		if ( ! error ) {
      			console.log(results);
+     			//book found render results
+     			res.render('index', { user: req.user, search: req.body.title, book: "" });
     		} else {
         		console.log(error);
+        		//what to do if error in searching for book
+        		res.render('index', { user: req.user, search: req.body.title, book: "" });
     		}
 		});
-		res.render('index', { user: req.user, search: req.body.title });
+		
   })
 
 passport.serializeUser(function(user, cb) {
