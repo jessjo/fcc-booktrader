@@ -14,6 +14,8 @@ var app = express();
 
 mongoose.connect(process.env.MONGO_URI);
 
+
+
 //configure passport
 
 passport.use(new Strategy({
@@ -64,7 +66,16 @@ app.use(passport.session());
 app.get('/',
   function(req, res) {
     res.render('index', { user: req.user });
-    gBooks.search('Professional JavaScript for Web Developers', function(error, results) {
+    var options = {
+    	key: process.env.GOOGLE_BOOKS_SERVER_KEY,
+    	field: 'title',
+    	offset: 0,
+ 		limit: 1,
+    	type: 'books',
+    	order: 'relevance',
+    	lang: 'en'
+	};
+    gBooks.search('Professional JavaScript for Web Developers', options, function(error, results) {
     	if ( ! error ) {
      		console.log(results);
     	} else {
