@@ -95,8 +95,8 @@ app.get('/',
     	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
     			if ( ! error ) {
      			console.log(results);
-     			//book found build a book object, render results
-     			console.log (results[0].id);
+     			//book found in google books api, search our data base to see if it exists or add
+
      			Books.findOne({
             		'bookid': results[0].id 
         		}, function(err, book) {
@@ -117,7 +117,7 @@ app.get('/',
                 	book.save(function(err) {
                     	if (err) console.log(err);
                     	console.log(book);
-                    	
+                    	res.render('index', { user: req.user, search: req.body.title, book: book });
                     	return book;
                     
                 	});
@@ -126,11 +126,13 @@ app.get('/',
                 	//found book. Return
                 	console.log("found book");
                 	console.log(book);
-                	return book;
+                	
+                	res.render('index', { user: req.user, search: req.body.title, book: book });
+          			return book;
             }
         });
     
-     			res.render('index', { user: req.user, search: req.body.title, book: "" });
+     			
     		} else {
         		console.log(error);
         		//what to do if error in searching for book
