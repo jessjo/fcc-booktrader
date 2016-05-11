@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
 var Users = require('./app/models/users.js');
+var Books = require('./app/models/books.js');
 var gBooks = require ('google-books-search');
 var multer  = require('multer')
 var upload = multer({ dest: 'uploads/' })
@@ -81,6 +82,7 @@ app.get('/',
   		console.log(req.body.title);
   		
   		//set to only return 1 best match book
+  		
   	    var options = {
     		field: 'title',
     		offset: 0,
@@ -90,10 +92,38 @@ app.get('/',
     		lang: 'en'
 		};
 		
-    	gBooks.search(req.body.title, options, function(error, results) {
+    	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
     		if ( ! error ) {
      			console.log(results);
-     			//book found render results
+     			//book found build a book object, render results.
+     			Books.findOne({
+            		'id': req.body.id 
+        		}, function(err, book) {
+            		if (err) {
+                		return err;
+            		}
+            		//no book found, create one.
+        			 if (!book) {
+          
+                		book = new Books({
+                			id:req.body.id,
+                	 		title: req.body.title,
+                	 		authors: req.body.authors,
+                    		rating: req.body,
+                    		thumbnail: req.body.thumbnail,
+                 	
+                		});
+                	book.save(function(err) {
+                    	if (err) console.log(err);
+                    	console.log(book);
+                    	return book;
+                	});
+            	} else {
+                	//found book. Return
+                	return book;
+            }
+        });
+    
      			res.render('index', { user: req.user, search: req.body.title, book: "" });
     		} else {
         		console.log(error);
@@ -122,13 +152,7 @@ app.get('/auth/facebook/callback',
     res.redirect('/');
   });
   
-  /**
-  app.get('/profile',
-  require('connect-ensure-login').ensureLoggedIn(),
-  function(req, res){
-    res.render('profile', { user: req.user });
-  });
-  **/
+
 
 var port = process.env.PORT || 8080;
 app.listen(port,  function () {
