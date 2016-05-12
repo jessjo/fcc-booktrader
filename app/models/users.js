@@ -11,9 +11,8 @@ var User = new Schema({
 		facebook: String,
 		id: String,
 
-	local:{
 	    books: [String]
-	}
+	
 });
 
 module.exports = mongoose.model('User', User);

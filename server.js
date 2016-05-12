@@ -130,11 +130,13 @@ app.get('/',
                 	console.log(book);
                 	var owned = false;
                 	if (req.user){
-                		owned = checkOwnership(book.bookID,req.user);
+                		console.log(req.user);
+                		owned = checkOwnership(book.bookid, req.user, res, req, book, owned);
+                	} else {
+                		console.log ("the owned status is "+ owned);
+                		res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
+          				return book;
                 	}
-                	console.log ("the owned status is "+ owned);
-                	res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
-          			return book;
             }
         });
     
@@ -151,40 +153,34 @@ app.get('/',
   app.post('/addBook', upload.array(),
   	 function(req,res){
   	 	var user = req.user;
-  	 	console.log(user);
-  			Books.findOne({
-            		'bookid': req.body.bookID
-        		}, function(err, book) {
-            		if (err) {
-                		return err;
-            		}
-            		console.log (book.owners);
-            		book.owners[book.owners.length] = user.id;
-            		book.save(function(err) {
-                    	if (err) console.log(err);
-                    	console.log(book);
-
-                    
-                	});
-                	//Need to modify user in  system not req.
-                	
-                	     Users.findOne({
-            				'id': user.id 
-    						 }, function(err, userDB) {
-    						 	if (err) throw err;
-    						 	userDB.local.books[userDB.local.books.length]=req.body.bookID;
-                	
-                	
-                					userDB.save(function(err) {
-                    					if (err) console.log(err);
-                    					console.log("successful user save");
-                					});
-    						 });
+  	 	var thisBookID = req.body.bookID;
+  			   	Books.findOneAndUpdate(
+    					{bookid: req.body.bookID},
+    					{$push: {owners: user.id}},
+    					{safe: true, upsert: true},
+    					function(err, model) {
+        					if (err) console.log(err);
+			                	Users.findOneAndUpdate(
+			    					{id: user.id},
+			    					{$push: {books: thisBookID}},
+			    					{safe: true, upsert: true},
+			    					function(err, model2) {
+			    						console.log ("user update:" + model2)
+			    						console.log(user);
+			        					if (err) console.log(err);
+			        					res.render('index', { user: user, search: req.body.title, book: "", owned: true });
+			
+			    					}
+			    				);
+			                	
+			               
+			    					}
+			    	);
                 	
         		});
   
 		
-  })
+ 
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);
@@ -213,11 +209,18 @@ app.listen(port,  function () {
 
 
 //function to check if the user owns a given book
-function checkOwnership(bookID, user){
-	console.log(user);
-	if(user.local.books.indexOf(bookID) >= 0){
-		return true;
+function checkOwnership(bookID, user, res, req, book, owned){
+	console.log(bookID + " is the bookID");
+	console.log(user.books.indexOf(bookID) + " is the index of bookID");
+	if(user.books.indexOf(bookID) >= 0){
+		
+		owned = true;
+		console.log ("the owned status is "+ owned);
+        res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
+	
+	} else {
+		 res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
+
 	}
-	return false;
 	
 }
