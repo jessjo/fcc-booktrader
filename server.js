@@ -141,6 +141,13 @@ app.get('/',
 		});
 		
   })
+  
+  app.post('/addBook', upload.array(),
+  	function(req,res){
+  		console.log(req.body);
+  
+		
+  })
 
 passport.serializeUser(function(user, cb) {
   cb(null, user);

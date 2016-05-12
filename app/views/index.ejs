@@ -17,9 +17,10 @@
 
 <% } %>
  <% if (book) { %>
-     <img src=<%= book.thumbnail %>>
      <h4><%= book.title %></h4>
+     <img src=<%= book.thumbnail %>>
+     
      <form class="input-append" id="file-form" enctype="multipart/form-data" method="post"  action="/addBook">
-      <input type="submit" value="Add to my Books" id= <%= book.bookid %> />
+      <button name="subject" type="submit" value=<%= book.bookid %>>Add to my Books</button>
      </form>
  <% } %>
