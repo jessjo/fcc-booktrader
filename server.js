@@ -68,7 +68,7 @@ app.use(passport.session());
 
 app.get('/',
   function(req, res) {
-    res.render('index', { user: req.user, search: "", book: "" });
+    res.render('index', { user: req.user, search: "", book: "", owned: "" });
    
   });
   
@@ -117,7 +117,7 @@ app.get('/',
                 	book.save(function(err) {
                     	if (err) console.log(err);
                     	console.log(book);
-                    	res.render('index', { user: req.user, search: req.body.title, book: book });
+                    	res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
                     	return book;
                     
                 	});
@@ -136,15 +136,24 @@ app.get('/',
     		} else {
         		console.log(error);
         		//what to do if error in searching for book
-        		res.render('index', { user: req.user, search: req.body.title, book: "" });
+        		res.render('index', { user: req.user, search: req.body.title, book: "", owned: "" });
     		}
 		});
 		
   })
   
   app.post('/addBook', upload.array(),
-  	function(req,res){
+  	 function(req,res){
   		console.log(req.body);
+  			Books.findOne({
+            		'bookid': req.body.bookID
+        		}, function(err, book) {
+            		if (err) {
+                		return err;
+            		}
+            		console.log (book.owners);
+            		book.owners[book.owners.length] = "placeholder";
+        		});
   
 		
   })
