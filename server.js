@@ -117,17 +117,23 @@ app.get('/',
                 	book.save(function(err) {
                     	if (err) console.log(err);
                     	console.log(book);
+                    
                     	res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
                     	return book;
                     
                 	});
                 		
             	} else {
-                	//found book. Return
+                	//found book. Return. The only time to check if owned is if we know it's in collection.
+                	
                 	console.log("found book");
                 	console.log(book);
-                	
-                	res.render('index', { user: req.user, search: req.body.title, book: book });
+                	var owned = false;
+                	if (req.user){
+                		owned = checkOwnership(book.bookID,req.user);
+                	}
+                	console.log ("the owned status is "+ owned);
+                	res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
           			return book;
             }
         });
@@ -144,7 +150,8 @@ app.get('/',
   
   app.post('/addBook', upload.array(),
   	 function(req,res){
-  		console.log(req.body);
+  	 	var user = req.user;
+  	 	console.log(user);
   			Books.findOne({
             		'bookid': req.body.bookID
         		}, function(err, book) {
@@ -152,7 +159,28 @@ app.get('/',
                 		return err;
             		}
             		console.log (book.owners);
-            		book.owners[book.owners.length] = "placeholder";
+            		book.owners[book.owners.length] = user.id;
+            		book.save(function(err) {
+                    	if (err) console.log(err);
+                    	console.log(book);
+
+                    
+                	});
+                	//Need to modify user in  system not req.
+                	
+                	     Users.findOne({
+            				'id': user.id 
+    						 }, function(err, userDB) {
+    						 	if (err) throw err;
+    						 	userDB.local.books[userDB.local.books.length]=req.body.bookID;
+                	
+                	
+                					userDB.save(function(err) {
+                    					if (err) console.log(err);
+                    					console.log("successful user save");
+                					});
+    						 });
+                	
         		});
   
 		
@@ -182,3 +210,14 @@ var port = process.env.PORT || 8080;
 app.listen(port,  function () {
 	console.log('Node.js listening on port ' + port + '...');
 });
+
+
+//function to check if the user owns a given book
+function checkOwnership(bookID, user){
+	console.log(user);
+	if(user.local.books.indexOf(bookID) >= 0){
+		return true;
+	}
+	return false;
+	
+}

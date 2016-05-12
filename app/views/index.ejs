@@ -19,8 +19,16 @@
  <% if (book) { %>
      <h4><%= book.title %></h4>
      <img src=<%= book.thumbnail %>>
-     
-     <form class="input-append" id="file-form" enctype="multipart/form-data" method="post"  action="/addBook">
-      <button name="bookID" type="submit" value=<%= book.bookid %>>Add to my Books</button>
-     </form>
+     <% if (user) { %>
+         <% if (!owned) { %>
+             <form class="input-append" id="file-form" enctype="multipart/form-data" method="post"  action="/addBook">
+              <button name="bookID" type="submit" value=<%= book.bookid %>>Add to my Books</button>
+             </form>
+         <% } else {%>
+             You already own this one!
+          <% } %>
+         
+     <% } else { %>
+          Log in to add a book.
+      <% } %>
  <% } %>
