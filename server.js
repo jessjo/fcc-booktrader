@@ -84,8 +84,17 @@ app.get('/',
     
     //look up each book add to book array
     console.log(req.user);
+     Users.findOne({
+            		  'id': req.user.id
+        		  }, function(err, user) {
+            	  	if (err) {
+                	  	return err;
+            	  	}
+        if (user.books.length ==0){
+             res.render('mybooks', { user: user, books: "" });
+        }
         var z =0;
-    		for (var i=0; i<req.user.books.length; i++){
+    		for (var i=0; i<user.books.length; i++){
     		
     		  Books.findOne({
             		  'bookid': req.user.books[i] 
@@ -97,12 +106,15 @@ app.get('/',
             	  	  books[z] = book;
             	  	  z++;
             	  	}
-            	  	if (i == req.user.books.length){
-            	  	    console.log (books);
-            	        res.render('mybooks', { user: req.user, books: books });
-            	  	  }
+            	  	console.log("i "+ i + "books.length " + user.books.length + "books" + books.length);
+            	  	if (books.length == user.books.length){
+            	  	    console.log ("Number of books:" + user.books.length);
+            	        res.render('mybooks', { user: user, books: books });
+            	  	}
         		});
     		}
+    		
+        		  });
    
   });
   
@@ -125,7 +137,7 @@ app.get('/',
     			if ( ! error ) {
      			console.log(results);
      			//book found in google books api, search our data base to see if it exists or add
-
+        
      			Books.findOne({
             		'bookid': results[0].id 
         		}, function(err, book) {
