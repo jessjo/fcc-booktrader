@@ -90,6 +90,7 @@ app.get('/',
             	  	if (err) {
                 	  	return err;
             	  	}
+            	  	console.log(user);
         if (user.books.length ==0){
              res.render('mybooks', { user: user, books: "" });
         }
@@ -97,7 +98,7 @@ app.get('/',
     		for (var i=0; i<user.books.length; i++){
     		
     		  Books.findOne({
-            		  'bookid': req.user.books[i] 
+            		  'bookid': user.books[i] 
         		  }, function(err, book) {
             	  	if (err) {
                 	  	return err;
