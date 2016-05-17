@@ -3,10 +3,11 @@
 <% } else { %>
 	<p>Hello, <%= user.name %>.</p>
 	  <% for(var i=0; i<books.length; i++) { %>
-        <li>
+        <div id="book">
             <a href='books/<%= books[i].bookid %>'>
-                <%= books[i].title %>
+                <img src='<%= books[i].thumbnail %>'>
+                <div id='book-title'> <%= books[i].title %></div>
             </a>
-        </li>
+        </div>
     <% } %>
 <% } %>
