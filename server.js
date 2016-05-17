@@ -84,6 +84,18 @@ app.get('/',
     
   });
   
+  app.get('/books/:bookID',
+  function(req, res) {
+   var thisBook =req.params.bookID;
+        Books.findOne({
+            		  'bookid': thisBook
+        		  }, function(err, book) {
+        		    if(err) throw err;
+        		     res.render('book', { book: book });
+        		  });
+    
+  });
+  
   
   app.get('/mybooks',
   function(req, res) {
