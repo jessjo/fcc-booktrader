@@ -77,6 +77,12 @@ app.get('/',
     res.render('login');
   });
   
+  app.get('/mybooks',
+  function(req, res) {
+    res.render('mybooks', { user: req.user });
+   
+  });
+  
   app.post('/findBook', upload.array(),
   	function(req,res){
   		console.log(req.body.title);
