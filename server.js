@@ -84,17 +84,23 @@ app.get('/',
     
     //look up each book add to book array
     console.log(req.user);
+        var z =0;
     		for (var i=0; i<req.user.books.length; i++){
+    		
     		  Books.findOne({
-            		  'id': req.user.books[i] 
+            		  'bookid': req.user.books[i] 
         		  }, function(err, book) {
             	  	if (err) {
                 	  	return err;
             	  	}
-            	  	books[i] = book;
-            	  	if (i == req.user.books.length){
-            	      res.render('mybooks', { user: req.user, books: req.user.books });
+            	  	if (book){
+            	  	  books[z] = book;
+            	  	  z++;
             	  	}
+            	  	if (i == req.user.books.length){
+            	  	    console.log (books);
+            	        res.render('mybooks', { user: req.user, books: books });
+            	  	  }
         		});
     		}
    

@@ -4,8 +4,8 @@
 	<p>Hello, <%= user.name %>.</p>
 	  <% for(var i=0; i<books.length; i++) { %>
         <li>
-            <a href='books/<%= books[i] %>'>
-                Book! 
+            <a href='books/<%= books[i].bookid %>'>
+                <%= books[i].title %>
             </a>
         </li>
     <% } %>
