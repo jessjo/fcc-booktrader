@@ -1,0 +1,9 @@
+	<h4>All Books.</h4>
+	  <% for(var i=0; i<books.length; i++) { %>
+        <div id="book">
+            <a href='books/<%= books[i].bookid %>'>
+                <img src='<%= books[i].thumbnail %>'>
+                <div id='book-title'> <%= books[i].title %></div>
+            </a>
+        </div>
+    <% } %>
