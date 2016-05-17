@@ -11,7 +11,8 @@ var User = new Schema({
 		facebook: String,
 		id: String,
 	    books: [String],
-		status:[String]
+		status:[String],
+		borrowed: [{bookid: String,user: String}]
 });
 
 module.exports = mongoose.model('User', User);
