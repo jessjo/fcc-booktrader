@@ -2,10 +2,10 @@
 	<p>Welcome! Please <a href="/auth/facebook">log in with facebook</a>.</p>
 <% } else { %>
 	<p>Hello, <%= user.name %>.</p>
-	  <% for(var i=0; i<books; i++) { %>
+	  <% for(var i=0; i<books.length; i++) { %>
         <li>
-            <a href='books/<%= book[i] %>'>
-                Book!
+            <a href='books/<%= books[i] %>'>
+                Book! 
             </a>
         </li>
     <% } %>
