@@ -68,6 +68,7 @@ app.use(passport.session());
 
 app.get('/',
   function(req, res) {
+
     res.render('index', { user: req.user, search: "", book: "", owned: "" });
    
   });
@@ -153,7 +154,7 @@ app.get('/',
                 	 		title: results[0].title,
                 	 	    author: results[0].authors,
                     		rating: results[0].averageRating,
-                    		thumbnail: results[0].thumbnail,
+                    		thumbnail: results[0].thumbnail
                  	
                 		});
                 	book.save(function(err) {
@@ -167,8 +168,6 @@ app.get('/',
                 		
             	} else {
                 	//found book. Return. The only time to check if owned is if we know it's in collection.
-                	
-                	console.log("found book");
                 	console.log(book);
                 	var owned = false;
                 	if (req.user){
@@ -196,9 +195,16 @@ app.get('/',
   	 function(req,res){
   	 	var user = req.user;
   	 	var thisBookID = req.body.bookID;
+  	 	       	Users.findOneAndUpdate(
+    					  {id: user.id},
+    					  {$push: {status: "owned"}},
+    				  	{safe: true, upsert: true},
+    					  function(err, model) {
+    					    if (err) throw err;
+    					});
   			   	Books.findOneAndUpdate(
     					{bookid: req.body.bookID},
-    					{$push: {owners: user.id}},
+    					{$push: {owners: req.user.id}},
     					{safe: true, upsert: true},
     					function(err, model) {
         					if (err) console.log(err);

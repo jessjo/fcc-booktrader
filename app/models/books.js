@@ -10,8 +10,7 @@ var Book = new Schema({
 		bookid: String,
 		rating: Number,
 		thumbnail: String,
-		owners: [String],
-		status: String
+		owners: [String]
 	
 });
 

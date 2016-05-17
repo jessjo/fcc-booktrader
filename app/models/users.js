@@ -10,9 +10,8 @@ var User = new Schema({
 		username: String,
 		facebook: String,
 		id: String,
-
-	    books: [String]
-	
+	    books: [String],
+		status:[String]
 });
 
 module.exports = mongoose.model('User', User);
