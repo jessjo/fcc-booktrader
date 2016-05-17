@@ -79,7 +79,20 @@ app.get('/',
   
   app.get('/mybooks',
   function(req, res) {
-    res.render('mybooks', { user: req.user });
+    var books = [];
+    //find a user, get their book list. 
+    
+    //look up each book add to book array
+    console.log(req.user);
+    res.render('mybooks', { user: req.user, books: req,user.books });
+    		Users.findOne({
+            		'id': req.user.id 
+        		}, function(err, user) {
+            		if (err) {
+                		return err;
+            		}
+            	  console.log(user.books);
+        		});
    
   });
   
