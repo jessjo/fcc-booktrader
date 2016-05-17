@@ -79,7 +79,7 @@ app.get('/',
     Books.find({ "owners.0": { "$exists": true } },function(err,books) {
       if (err) throw err;
         console.log(books.length);
-
+        res.render('index', { user: req.user, books: books });
     })
     
   });
