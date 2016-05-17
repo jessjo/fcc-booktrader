@@ -73,10 +73,17 @@ app.get('/',
    
   });
   
-  app.get('/login',
-  function(req, res){
-    res.render('login');
+  app.get('/allbooks',
+  function(req, res) {
+   var thesebooks =[];
+    Books.find({ "owners.0": { "$exists": true } },function(err,books) {
+      if (err) throw err;
+        console.log(books.length);
+
+    })
+    
   });
+  
   
   app.get('/mybooks',
   function(req, res) {

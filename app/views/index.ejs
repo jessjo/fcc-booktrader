@@ -1,7 +1,7 @@
 <% if (!user) { %>
 	<p>Welcome! Please <a href="/auth/facebook">log in with facebook</a>.</p>
 <% } else { %>
-	<p>Hello, <%= user.name %>. <a href="/mybooks">My books.</a></p> 
+	<p>Hello, <%= user.name %>. <a href="/mybooks">My books.</a> | <a href="/allbooks">All books.</a></p> 
 <% } %>
 <% if (!search) { %>
  <form class="input-append" id="file-form" enctype="multipart/form-data" method="post"  action="/findBook">
