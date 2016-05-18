@@ -148,40 +148,46 @@ app.get('/',
   	    var options = {
     		field: 'title',
     		offset: 0,
- 			limit: 1,
+ 			limit: 5,
     		type: 'books',
     		order: 'relevance',
     		lang: 'en'
 		};
+		var allbooks = [];
 		
     	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
     			if ( ! error ) {
      			console.log(results);
      			//book found in google books api, search our data base to see if it exists or add
-        
+        for (var i=0; i<results.length; i++){
+          
      			Books.findOne({
-            		'bookid': results[0].id 
+            		'bookid': results[i].id 
         		}, function(err, book) {
             		if (err) {
                 		return err;
             		}
             		//no book found, create one.
         			 if (!book) {
+        			    console.log(results[i].id);
           
-                		book = new Books({
-                			bookid:results[0].id,
-                	 		title: results[0].title,
-                	 	    author: results[0].authors,
-                    		rating: results[0].averageRating,
-                    		thumbnail: results[0].thumbnail
+                	 book = new Books({
+                			  bookid: results[i].id,
+                	 		  title: results[i].title,
+                	 	    author: results[i].authors,
+                    		rating: results[i].averageRating,
+                    		thumbnail: results[i].thumbnail
                  	
                 		});
                 	book.save(function(err) {
                     	if (err) console.log(err);
-                    	console.log(book);
-                    
-                    	res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
-                    	return book;
+                    	//console.log(book);
+                    	allbooks.push(book);
+                      if (i==results.length-1){
+                        console.log(allbooks);
+                    	    res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
+                      }
+                  //  	return book;
                     
                 	});
                 		
@@ -199,7 +205,7 @@ app.get('/',
                 	}
             }
         });
-    
+        }
      			
     		} else {
         		console.log(error);
