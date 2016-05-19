@@ -141,78 +141,7 @@ app.get('/',
   
   app.post('/findBook', upload.array(),
   	function(req,res){
-  		console.log(req.body.title);
-  		
-  		//set to only return 1 best match book
-  		
-  	    var options = {
-    		field: 'title',
-    		offset: 0,
- 			limit: 5,
-    		type: 'books',
-    		order: 'relevance',
-    		lang: 'en'
-		};
-		var allbooks = [];
-		
-    	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
-    			if ( ! error ) {
-     			console.log(results);
-     			//book found in google books api, search our data base to see if it exists or add
-        for (var i=0; i<results.length; i++){
-          
-     			Books.findOne({
-            		'bookid': results[i].id 
-        		}, function(err, book) {
-            		if (err) {
-                		return err;
-            		}
-            		//no book found, create one.
-        			 if (!book) {
-        			    console.log(results[i].id);
-          
-                	 book = new Books({
-                			  bookid: results[i].id,
-                	 		  title: results[i].title,
-                	 	    author: results[i].authors,
-                    		rating: results[i].averageRating,
-                    		thumbnail: results[i].thumbnail
-                 	
-                		});
-                	book.save(function(err) {
-                    	if (err) console.log(err);
-                    	//console.log(book);
-                    	allbooks.push(book);
-                      if (i==results.length-1){
-                        console.log(allbooks);
-                    	    res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
-                      }
-                  //  	return book;
-                    
-                	});
-                		
-            	} else {
-                	//found book. Return. The only time to check if owned is if we know it's in collection.
-                	console.log(book);
-                	var owned = false;
-                	if (req.user){
-                		console.log(req.user);
-                		owned = checkOwnership(book.bookid, req.user, res, req, book, owned);
-                	} else {
-                		console.log ("the owned status is "+ owned);
-                		res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
-          				return book;
-                	}
-            }
-        });
-        }
-     			
-    		} else {
-        		console.log(error);
-        		//what to do if error in searching for book
-        		res.render('index', { user: req.user, search: req.body.title, book: "", owned: "" });
-    		}
-		});
+  	  
 		
   })
   
@@ -296,4 +225,89 @@ function checkOwnership(bookID, user, res, req, book, owned){
 
 	}
 	
+}
+
+function returnBookInfo(res, req, displayPage){
+  var searchlimit = 5;
+  		console.log("search term: " + req.body.title);
+  		
+  		//set to only return 1 best match book
+  		
+  	    var options = {
+    		field: 'title',
+    		offset: 0,
+ 			limit: searchlimit,
+    		type: 'books',
+    		order: 'relevance',
+    		lang: 'en'
+		};
+		var allbooks = [];
+		var allowned = [];
+		
+    	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
+    			if ( ! error ) {
+     		
+     			//book found in google books api, search our data base to see if it exists or add
+      for (var i=0; i< searchlimit; i++){
+          console.log ( "search limit: " + searchlimit + "i: " + i);
+     			Books.findOne({
+            		'bookid': results[i].id 
+        		}, function(err, book) {
+            		if (err) {
+                		return err;
+            		}
+            		//no book found, create one.
+        			 if (!book && i <searchlimit) {
+          
+                	 book = new Books({
+                			  bookid: results[i].id,
+                	 		  title: results[i].title,
+                	 	    author: results[i].authors,
+                    		rating: results[i].averageRating,
+                    		thumbnail: results[i].thumbnail
+                 	
+                		});
+                	book.save(function(err) {
+                    	if (err) console.log(err);
+                    	//console.log(book);
+                    	allbooks.push(book);
+                    	allowned.push(true);
+                    	console.log(allbooks);
+                      if (i==results.length-1){
+                          console.log("allbooks: " + allbooks);
+                    	   // res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
+                    	    return allbooks;
+                      }
+                  //  	
+                    
+                	});
+                		
+            	} else {
+                	//found book. Return. The only time to check if owned is if we know it's in collection.
+                	console.log(book + "is the book status and i is " + i);
+                	var owned = false;
+                	if (req.user){
+                		console.log(req.user);
+                		owned = checkOwnership(book.bookid, req.user, res, req, book, owned);
+                		allowned.push(owned);
+                	} else {
+                		console.log ("the owned status is "+ owned);
+                		//res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
+          				return book;
+                	}
+            }
+        });
+        }
+     			
+    		} else {
+        		console.log(error);
+        		//what to do if error in searching for book
+        		res.render('index', { user: req.user, search: req.body.title, book: "", owned: "" });
+    		}
+		});
+  displayPage(res,req, allowned[0], allbooks);
+}
+
+function displayPage(res, req, owned, allbooks){
+  res.render('index', { user: req.user, search: req.body.title, book: allbooks[0], owned: owned });
 }
