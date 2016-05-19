@@ -141,8 +141,7 @@ app.get('/',
   
   app.post('/findBook', upload.array(),
   	function(req,res){
-  	  
-		
+		returnBookInfo(res, req, displayPage);
   })
   
   app.post('/addBook', upload.array(),
@@ -309,5 +308,7 @@ function returnBookInfo(res, req, displayPage){
 }
 
 function displayPage(res, req, owned, allbooks){
+  console.log("here");
+  console.log (allbooks);
   res.render('index', { user: req.user, search: req.body.title, book: allbooks[0], owned: owned });
 }
