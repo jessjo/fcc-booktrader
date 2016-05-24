@@ -70,7 +70,7 @@ app.use(passport.session());
 app.get('/',
   function(req, res) {
 
-    res.render('index', { user: req.user, search: "", book: "", owned: "" });
+    res.render('index', { user: req.user, search: "", books: "", owned: "" });
    
   });
   
@@ -170,7 +170,7 @@ app.get('/',
 			    						console.log ("user update:" + model2)
 			    						console.log(user);
 			        					if (err) console.log(err);
-			        					res.render('index', { user: user, search: req.body.title, book: "", owned: true });
+			        					res.render('index', { user: user, search: req.body.title, books: "", owned: true });
 			
 			    					}
 			    				);
@@ -211,7 +211,7 @@ app.listen(port,  function () {
 
 
 //function to check if the user owns a given book
-function checkOwnership(bookID, user, res, req, book, owned, allowned, allbooks){
+function checkOwnership(bookID, user, res, req, book, owned){
 	if(user.books.indexOf(bookID) >= 0){
 		
 		owned = true;
@@ -275,14 +275,14 @@ function returnBookInfo(res, req, displayPage){
                 	allbooks.push(book);
                 	var owned = false;
                 	if (req.user){
-                		//console.log(req.user);
-                		allowned.push(checkOwnership(book.bookid, req.user, res, req, book, owned, allowned, allbooks));
+
+                		allowned.push(checkOwnership(book.bookid, req.user, res, req, book, owned));
                 	}
              
             }
               if (++lookup == results.length){
                           console.log("allbooks: right here" + allbooks);
-                    	    res.render('index', { user: req.user, search: req.body.title, book: allbooks[0], owned: allowned[0] });
+                    	    res.render('index', { user: req.user, search: req.body.title, books: allbooks, owned: allowned[0] });
                }
         });
         
@@ -297,5 +297,5 @@ function returnBookInfo(res, req, displayPage){
 function displayPage(res, req, owned, allbooks){
 
   //console.log (allbooks);
-  res.render('index', { user: req.user, search: req.body.title, book: allbooks[0], owned: owned });
+  res.render('index', { user: req.user, search: req.body.title, books: allbooks, owned: owned });
 }
