@@ -227,43 +227,43 @@ function checkOwnership(bookID, user, res, req, book, owned){
 }
 
 function returnBookInfo(res, req, displayPage){
-  var searchlimit = 5;
+      var searchlimit = 5;
   		console.log("search term: " + req.body.title);
   		
   		//set to only return 1 best match book
   		
-  	    var options = {
-    		field: 'title',
-    		offset: 0,
- 			limit: searchlimit,
-    		type: 'books',
-    		order: 'relevance',
-    		lang: 'en'
-		};
-		var allbooks = [];
-		var allowned = [];
+  	   var options = {
+    		  field: 'title',
+    	  	offset: 0,
+ 			    limit: searchlimit,
+    	  	type: 'books',
+    		  order: 'relevance',
+    		  lang: 'en'
+	  	};
+		  var allbooks = [];
+	  	var allowned = [];
+	  	var lookup = 0;
 		
     	var thisBook = gBooks.search(req.body.title, options, function(error, results) {
     			if ( ! error ) {
-     		
+     		  results.forEach(function(result) {
      			//book found in google books api, search our data base to see if it exists or add
-      for (var i=0; i< searchlimit; i++){
-          console.log ( "search limit: " + searchlimit + "i: " + i);
-     			Books.findOne({
-            		'bookid': results[i].id 
-        		}, function(err, book) {
+         
+     			  Books.findOne({
+            		'bookid': result.id 
+        		  }, function(err, book) {
             		if (err) {
                 		return err;
             		}
             		//no book found, create one.
-        			 if (!book && i <searchlimit) {
+        			 if (!book) {
           
                 	 book = new Books({
-                			  bookid: results[i].id,
-                	 		  title: results[i].title,
-                	 	    author: results[i].authors,
-                    		rating: results[i].averageRating,
-                    		thumbnail: results[i].thumbnail
+                			  bookid: result.id,
+                	 		  title: result.title,
+                	 	    author: result.authors,
+                    		rating: result.averageRating,
+                    		thumbnail: result.thumbnail
                  	
                 		});
                 	book.save(function(err) {
@@ -272,7 +272,7 @@ function returnBookInfo(res, req, displayPage){
                     	allbooks.push(book);
                     	allowned.push(true);
                     	console.log(allbooks);
-                      if (i==results.length-1){
+                      if (++lookup == results.length){
                           console.log("allbooks: " + allbooks);
                     	   // res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
                     	    return allbooks;
@@ -283,7 +283,7 @@ function returnBookInfo(res, req, displayPage){
                 		
             	} else {
                 	//found book. Return. The only time to check if owned is if we know it's in collection.
-                	console.log(book + "is the book status and i is " + i);
+                	console.log("found book: " + book );
                 	var owned = false;
                 	if (req.user){
                 		console.log(req.user);
@@ -296,15 +296,13 @@ function returnBookInfo(res, req, displayPage){
                 	}
             }
         });
-        }
+        
      			
-    		} else {
-        		console.log(error);
-        		//what to do if error in searching for book
-        		res.render('index', { user: req.user, search: req.body.title, book: "", owned: "" });
-    		}
-		});
-  displayPage(res,req, allowned[0], allbooks);
+    
+    			});
+    			}
+});
+
 }
 
 function displayPage(res, req, owned, allbooks){
