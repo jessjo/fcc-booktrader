@@ -17,18 +17,19 @@
 
 <% } %>
  <% if (books) { %>
+ <% var num = 0; %>
  <% books.forEach(function(book) { %>
      <h4><%= book.title %></h4>
      <img src=<%= book.thumbnail %>>
      <% if (user) { %>
-         <% if (!owned) { %>
+         <% if (!owned[num]) { %>
              <form class="input-append" id="file-form" enctype="multipart/form-data" method="post"  action="/addBook">
               <button name="bookID" type="submit" value=<%= book.bookid %>>Add to my Books</button>
              </form>
          <% } else {%>
              You already own this one!
           <% } %>
-         
+         <% num++;%>
      <% } else { %>
           Log in to add a book.
       <% } %>

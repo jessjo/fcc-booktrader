@@ -169,6 +169,7 @@ app.get('/',
 			    					function(err, model2) {
 			    						console.log ("user update:" + model2)
 			    						console.log(user);
+			    						req.user.books = user.books;
 			        					if (err) console.log(err);
 			        					res.render('index', { user: user, search: req.body.title, books: "", owned: true });
 			
@@ -211,13 +212,20 @@ app.listen(port,  function () {
 
 
 //function to check if the user owns a given book
-function checkOwnership(bookID, user, res, req, book, owned){
-	if(user.books.indexOf(bookID) >= 0){
-		
-		owned = true;
-	}
-	   	
-	
+function checkOwnership(bookID, userloc, res, req, book, owned){
+	 Users.findOne({
+            'id': userloc.id 
+        }, function(err, user) {
+            if (err)   return err;
+            
+	        console.log("book ID: " +bookID + " user.books: " + user.books)
+	      if(user.books.indexOf(bookID) >= 0){
+		        console.log("I own this")
+		        owned = true;
+	      }
+      	    allowned.push(owned);
+        });
+        
 }
 
 function returnBookInfo(res, req, displayPage){
@@ -275,14 +283,14 @@ function returnBookInfo(res, req, displayPage){
                 	allbooks.push(book);
                 	var owned = false;
                 	if (req.user){
-
-                		allowned.push(checkOwnership(book.bookid, req.user, res, req, book, owned));
+                    checkOwnership(book.bookid, req.user, res, req, book, owned);
+                		
                 	}
              
             }
               if (++lookup == results.length){
-                          console.log("allbooks: right here" + allbooks);
-                    	    res.render('index', { user: req.user, search: req.body.title, books: allbooks, owned: allowned[0] });
+                          console.log("allowned: right here" + allowned);
+                    	    res.render('index', { user: req.user, search: req.body.title, books: allbooks, owned: allowned });
                }
         });
         
