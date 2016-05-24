@@ -217,11 +217,7 @@ function checkOwnership(bookID, user, res, req, book, owned){
 		
 		owned = true;
 		console.log ("the owned status is "+ owned);
-        res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
-	
-	} else {
-		 res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
-
+    return owned;
 	}
 	
 }
@@ -272,11 +268,7 @@ function returnBookInfo(res, req, displayPage){
                     	allbooks.push(book);
                     	allowned.push(true);
                     	console.log(allbooks);
-                      if (++lookup == results.length){
-                          console.log("allbooks: " + allbooks);
-                    	   // res.render('index', { user: req.user, search: req.body.title, book: book, owned: "" });
-                    	    return allbooks;
-                      }
+                    
                   //  	
                     
                 	});
@@ -291,10 +283,15 @@ function returnBookInfo(res, req, displayPage){
                 		allowned.push(owned);
                 	} else {
                 		console.log ("the owned status is "+ owned);
-                		//res.render('index', { user: req.user, search: req.body.title, book: book, owned: owned });
+                	
           				return book;
                 	}
             }
+              if (++lookup == results.length){
+                          console.log("allbooks: " + allbooks);
+                    	    res.render('index', { user: req.user, search: req.body.title, book: allbooks[0], owned: allowned[0] });
+                    	    return allbooks;
+               }
         });
         
      			
