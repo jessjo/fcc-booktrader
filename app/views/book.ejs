@@ -1,4 +1,9 @@
 <h4><%= book.title %> by <%= book.author %>  </h4>
 <img src='<%= book.thumbnail %>'>
-<p><%= book.rating %>/5</p>
+<% if (book.rating) { %>
+    <p><%= book.rating %>/5</p>
+<% } else {%>
+    <p>No rating available</p>
+<% }%>
+
 <p><%= book.owners.length %> copies.</p>
